@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game</title>
+     <link rel="stylesheet" href="style.css">
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+        <script src="https://code.createjs.com/1.0.0/easeljs.min.js"> </script>
+        <script src="https://code.createjs.com/1.0.0/tweenjs.min.js"> </script>
+        <script src="https://code.createjs.com/1.0.0/soundjs.min.js"> </script>
+        <script src="https://code.createjs.com/1.0.0/preloadjs.min.js"> </script>
+</head>
+    <body onload="init();">
+        <canvas id="testCanvas" width="500" height="250"></canvas>
+        <canvas id="userCanvas" width="500" height="250"></canvas>
+        <script>
+
+        const BRICKS_WIDTH = 30;
+        const BRICKS_HEIGHT = 30;
+        const TILES_WIDTH = 30;
+        const TILES_HEIGHT = 30;
+        const SQUARE_HEIGHT = 30;
+        const SQUARE_WIDTH = 30;
+        const theTestCanvas = document.querySelector("#testCanvas");
+        var tile = "";
+        var brickColourArray = ['#000FFF', '	#ff0000', '#008000', '#ffff00' ];
+        var tileColourArray = ['#000FFF', '	#ff0000', '#008000', '#ffff00' ];
+        var randomBrickColour = "";
+        var tileColour = "";
+        var tileColourNumber = 0;
+        var stage;
+        var userStage
+        var bricks = [];
+        var userSquares = [];
+        var tiles = [];
+        var blueTile = "";
+        var redTile = "";
+        var greenTile = "";
+        var yellowTile = "";
+        var score = 0;
+        var lives = 3;
+        var scoreText;
+        var gameStarted = false;
+        var tileMouseDown = false;
+        //Keycodes for left, right and spacebar
+        //const KEYCODE_LEFT = 37;
+        //const KEYCODE_RIGHT = 39
+        //const SPACEBAR = 32;
+        var keyboardMoveLeft = false;
+        var keyboardMoveRight = false;
+        var highScore = 0;
+        var tileiCount = 0;
+        var tilejCount = 0;
+
+
+  function init() {
+    stage = new createjs. Stage("testCanvas");
+    userStage = new createjs. Stage("userCanvas");
+    createjs.Touch.enable(stage);
+    createjs.Touch.enable(userStage);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", tick);
+
+    createBrickGrid();
+    createAnswerGrid();
+    createTileGrid();
+    hideBricks()
+
+    tiles[0].on("pressmove", function(e) {
+
+        tiles[0].x = userStage.mouseX;
+        tiles[0].y = userStage.mouseY;
+    });
+    tiles[0].on("pressup", function(e) {
+      console.log("blue up");
+      tileColourNumber = 0;
+      tileiCount = 0;
+      createTile();
+  })
+
+    tiles[1].on("pressmove", function(e) {
+
+        tiles[1].x = userStage.mouseX;
+        tiles[1].y = userStage.mouseY;
+    });
+    tiles[1].on("pressup", function(e) {
+      console.log("red up");
+      tileColourNumber = 1;
+      tileiCount = 1;
+      createTile();
+   })
+
+   tiles[2].on("pressmove", function(e) {
+
+       tiles[2].x = userStage.mouseX;
+       tiles[2].y = userStage.mouseY;
+   });
+   tiles[2].on("pressup", function(e) {
+     console.log("green up");
+           tileColourNumber = 2;
+           tileiCount = 2;
+     createTile();
+  })
+
+  tiles[3].on("pressmove", function(e) {
+
+      tiles[3].x = userStage.mouseX;
+      tiles[3].y = userStage.mouseY;
+  });
+  tiles[3].on("pressup", function(e) {
+    console.log("yellow up");
+    tileColourNumber = 3;
+    tileiCount = 3;
+    createTile();
+ })
+  }
+
+
+function hideBricks() {
+  setTimeout(function() {
+  document.querySelector("#testCanvas").classList.add("hide");
+}, 20000);
+}
+
+  function tick(event)
+  {
+
+    if(tiles[0].x+TILES_WIDTH>userStage.canvas.width)
+      {
+        tiles[0].x = userStage.canvas.width - TILES_WIDTH;
+      }
+    if(tiles[0].x-TILES_WIDTH<0)
+      {
+        userStage.tiles[0].x = TILES_WIDTH;
+      }
+
+  //    if(tiles[0].y+TILES_HEIGHT>userStage.canvas.height)
+  //      {
+  //        tiles[0].y = userStage.canvas.height - TILES_HEIGHT;
+  //      }
+  //    if(tiles[0].y-TILES_HEIGHT<0)
+  //      {
+  //        userStage.tiles[0].y = TILES_HEIGHT;
+  //      }
+
+      if(tiles[1].x+TILES_WIDTH>userStage.canvas.width)
+        {
+          tiles[1].x = userStage.canvas.width - TILES_WIDTH;
+        }
+      if(tiles[1].x-TILES_WIDTH<0)
+        {
+          userStage.tiles[1].x = TILES_WIDTH;
+        }
+
+        if(tiles[2].x+TILES_WIDTH>userStage.canvas.width)
+          {
+            tiles[2].x = userStage.canvas.width - TILES_WIDTH;
+          }
+        if(tiles[2].x-TILES_WIDTH<0)
+          {
+            userStage.tiles[2].x = TILES_WIDTH;
+          }
+
+          if(tiles[3].x+TILES_WIDTH>userStage.canvas.width)
+            {
+              tiles[3].x = userStage.canvas.width - TILES_WIDTH;
+            }
+          if(tiles[3].x-TILES_WIDTH<0)
+            {
+              userStage.tiles[3].x = TILES_WIDTH;
+            }
+
+    stage.update();
+    userStage.update();
+}
+
+function createBrick(x, y) {
+  var brick = new createjs.Shape();
+  var randomNumber = Math.floor((Math.random() * brickColourArray.length));
+  var randomBrickColour = brickColourArray[randomNumber];
+  console.log(randomBrickColour);
+  brick.graphics.beginFill(randomBrickColour);
+  brick.graphics.drawRect(0, 0, BRICKS_WIDTH, BRICKS_HEIGHT);
+  brick.graphics.endFill();
+
+  //Change registration of the brick from top-left to middle for nice look to destroy brick
+  brick.regX = BRICKS_WIDTH/2;
+  brick.regY = BRICKS_HEIGHT/2;
+  brick.x = x;
+  brick.y = y;
+  brick.setBounds(brick.regX,brick.regY,BRICKS_WIDTH,BRICKS_HEIGHT);
+  stage.addChild(brick);
+  bricks.push(brick);
+}
+
+function createSquare(x, y) {
+  var userSquare = new createjs.Shape();
+  userSquare.graphics.beginFill("#cc6600");
+  userSquare.graphics.drawRect(0, 0, SQUARE_WIDTH, SQUARE_HEIGHT);
+  userSquare.graphics.endFill();
+  userStage.addChild(userSquare);
+  userSquares.push(userSquare);
+
+
+userSquare.regX = SQUARE_WIDTH/2;
+userSquare.regY = SQUARE_HEIGHT/2;
+userSquare.x = x;
+userSquare.y = y;
+userSquare.setBounds(userSquare.regX,userSquare.regY,SQUARE_WIDTH,SQUARE_HEIGHT);
+userStage.addChild(userSquare);
+userSquares.push(userSquare);
+}
+
+
+
+
+function createTile(x, y) {
+  tile = new createjs.Shape();
+  tileColour = tileColourArray[tileColourNumber];
+  tile.graphics.beginFill(tileColour);
+  console.log("tile colour: " + tileColour);
+  tile.graphics.drawRect(0, 0, BRICKS_WIDTH, BRICKS_HEIGHT);
+  tile.graphics.endFill();
+  userStage.addChild(tile);
+  tiles.push(tile);
+  console.log(tileColourNumber);
+  tileColourNumber++;
+
+tile.regX = TILES_WIDTH/2;
+tile.regY = TILES_HEIGHT/2;
+tile.setBounds(tile.regX,tile.regY,TILES_HEIGHT,TILES_HEIGHT);
+var remainder = tileiCount % 2;
+if(remainder==0) {
+  tile.x = userStage.canvas.width*0.9 - (tileiCount*20);
+} else {
+  tile.x = userStage.canvas.width*0.9 - ((tileiCount -1)*20);
+}
+tile.y = y;
+tile.setBounds(tile.regX,tile.regY,TILES_WIDTH,TILES_HEIGHT);
+//userStage.addChild(tile);
+//tiles.push(tile);
+}
+
+  function createBrickGrid() {
+    for(var i=0; i<3; i++)
+      for(var j=0; j<3; j++)
+        {
+          createBrick(i*(BRICKS_WIDTH +10)+40,j*(BRICKS_HEIGHT+5)+20);
+        }
+  }
+
+  function createAnswerGrid() {
+    for(var i=0; i<3; i++)
+      for(var j=0; j<3; j++)
+        {
+          createSquare(i*(SQUARE_WIDTH +10)+40,j*(SQUARE_HEIGHT+5)+20);
+        }
+  }
+
+ function createTileGrid() {
+    for(var i=0; i<2; i++)
+      for(var j=0; j<2; j++)
+       {
+          createTile(i*(TILES_WIDTH +10)+40,j*(TILES_HEIGHT+5)+20);
+          tileiCount = tileiCount + 1;
+          tilejCount = tilejCount = 1;
+       }
+
+  }
+        </script>
+    </body>
+</html>
